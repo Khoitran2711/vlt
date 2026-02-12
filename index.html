@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine Super Fast Challenge ❤️</title>
+    <style>
+        :root {
+            --heart-color: #ff4d6d;
+            --text-color: #d63384;
+            /* TỐC ĐỘ DI CHUYỂN - Bạn có thể tăng số này nếu muốn nhanh hơn nữa */
+            --speed-multiplier: 20; 
+        }
+
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: #fff5f7;
+        }
+
+       body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    /* Thêm hình nền ở đây */
+    background-image: url('background.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-family: 'Segoe UI', cursive, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Thêm một lớp phủ mờ để các hạt trái tim và chữ nổi bật hơn */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 245, 247, 0.3); /* Phủ một lớp hồng cực nhạt, trong suốt 30% */
+    z-index: 0;
+}
+
+        #photo-challenge {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; pointer-events: none;
+        }
+
+        .instruction-text {
+            position: absolute; top: 30px; width: 100%; text-align: center;
+            color: var(--text-color); text-shadow: 0 0 15px white;
+            font-size: 28px; font-weight: bold; z-index: 11;
+            text-transform: uppercase; letter-spacing: 2px;
+        }
+
+        .photo-item {
+            position: absolute; width: 110px; height: 110px;
+            border-radius: 50%; object-fit: cover;
+            border: 5px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            cursor: pointer; pointer-events: auto;
+            user-select: none;
+            will-change: transform, left, top; /* Tối ưu hiệu năng cho trình duyệt */
+        }
+
+        .photo-item:active { transform: scale(0.9); }
+
+        /* Khung nhập tên */
+        .input-container {
+            display: none; position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); z-index: 25;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px; border-radius: 35px; text-align: center;
+            width: 320px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 3px solid var(--heart-color);
+        }
+
+        input { padding: 15px; width: 85%; border: 2px solid #ffccd5; border-radius: 50px; outline: none; font-size: 18px; text-align: center; margin-bottom: 20px; }
+        button { padding: 15px 30px; background: var(--heart-color); color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
+
+        canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0; }
+        #love-rain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+        
+        .floating-text {
+            position: absolute; white-space: nowrap; color: var(--text-color);
+            font-weight: bold; text-shadow: 2px 2px 10px white;
+            animation: floatUp linear forwards;
+        }
+
+        @keyframes floatUp { 0% { transform: translateY(110vh); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-15vh); opacity: 0; } }
+
+        #final-message {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            width: 95%; font-size: 45px; color: var(--text-color); font-weight: bold;
+            text-align: center; z-index: 30; transition: 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 0 0 25px white;
+        }
+
+        .heart-beat { animation: beat 1.5s infinite; }
+        @keyframes beat { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.05); } }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0"
+  }
+}
+</script>
+</head>
+<body>
+
+    <div class="bg-overlay"></div>
+    <div class="blur-layer"></div>
+    <audio id="loveMusic" loop><source src="nhac.mp3" type="audio/mpeg"></audio>
+    <canvas id="canvas"></canvas>
+
+    <div id="photo-challenge">
+        <div class="instruction-text">Chọn ảnh cho đúng! 💨</div>
+        <img src="nguoi-la-1.jpg" class="photo-item" onclick="wrongAnswer()">
+        <img src="nguoi-yeu.jpg" class="photo-item" onclick="rightAnswer()">
+        <img src="nguoi-la-2.jpg" class="photo-item" onclick="wrongAnswer()">
+        <img src="nguoi-la-3.jpg" class="photo-item" onclick="wrongAnswer()">
+    </div>
+
+    <div class="input-container" id="inputBox">
+        <h2 style="color: var(--text-color); margin-top:0;">Đỉnh quá! Bắt được anh rồi! ✨</h2>
+        <input type="text" id="userName" placeholder="Nhập tên em vào đây..." autocomplete="off">
+        <button onclick="startLove()">Gửi ngàn đóa hồng 🌹</button>
+    </div>
+
+    <div id="love-rain"></div>
+    <div id="final-message"></div>
+
+<script>
+    // --- KHỞI TẠO VẬT LÝ CHO ẢNH ---
+    const photos = document.querySelectorAll('.photo-item');
+const photoData = [];
+const BASE_SPEED = 5; // Tốc độ cơ bản (rất nhanh)
+
+photos.forEach(photo => {
+    // Đảm bảo dx và dy không bao giờ quá nhỏ (không bao giờ dưới 15)
+    let dx = (Math.random() - 0.5) * BASE_SPEED;
+    let dy = (Math.random() - 0.5) * BASE_SPEED;
+
+    // Fix lỗi "chạy chậm": Nếu vận tốc quá nhỏ, đẩy nó lên mức tối thiểu
+    if (Math.abs(dx) < 5) dx = dx < 0 ? -5 : 5;
+    if (Math.abs(dy) < 5) dy = dy < 0 ? -5 : 5;
+
+    photoData.push({
+        el: photo,
+        x: Math.random() * (window.innerWidth - 110),
+        y: Math.random() * (window.innerHeight - 110),
+        dx: dx,
+        dy: dy,
+        rotation: 0,
+        rotSpeed: (Math.random() - 0.5) * 10
+    });
+});
+
+    function updatePhysics() {
+    photoData.forEach(p => {
+        p.x += p.dx;
+        p.y += p.dy;
+        p.rotation += p.rotSpeed;
+
+        // Va chạm biên - Nảy lại cực căng
+        if (p.x + 110 > window.innerWidth || p.x < 0) {
+            p.dx *= -1;
+            // Giữ cho vị trí không bị kẹt ngoài màn hình
+            p.x = p.x < 0 ? 0 : window.innerWidth - 110;
+        }
+        if (p.y + 110 > window.innerHeight || p.y < 0) {
+            p.dy *= -1;
+            p.y = p.y < 0 ? 0 : window.innerHeight - 110;
+        }
+
+        p.el.style.left = p.x + 'px';
+        p.el.style.top = p.y + 'px';
+        p.el.style.transform = `rotate(${p.rotation}deg)`;
+    });
+    requestAnimationFrame(updatePhysics);
+}
+updatePhysics();
+
+    function wrongAnswer() {
+        alert("Hụt rồi! 😠 Chọn lại coi!");
+    }
+
+    function rightAnswer() {
+        document.getElementById('photo-challenge').style.display = 'none';
+        document.getElementById('inputBox').style.display = 'block';
+    }
+
+    // --- HIỆU ỨNG NỀN VÀ CHỮ (Giữ nguyên) ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+
+    function drawHeart(x, y, size, color, opacity) {
+        ctx.save(); ctx.beginPath(); ctx.translate(x, y); ctx.scale(size, size);
+        ctx.moveTo(0, 0); ctx.bezierCurveTo(-1.5, -1.5, -1.5, 0.5, 0, 1.5);
+        ctx.bezierCurveTo(1.5, 0.5, 1.5, -1.5, 0, 0);
+        ctx.fillStyle = color; ctx.globalAlpha = opacity; ctx.fill(); ctx.restore();
+    }
+
+    class HeartParticle {
+        constructor() { this.reset(); }
+        reset() { this.x = Math.random() * canvas.width; this.y = canvas.height + 50; this.size = Math.random() * 8 + 3; this.speed = Math.random() * 1 + 0.5; this.opacity = Math.random() * 0.4 + 0.1; this.color = '#ffccd5'; }
+        update() { this.y -= this.speed; if (this.y < -50) this.reset(); }
+        draw() { drawHeart(this.x, this.y, this.size / 10, this.color, this.opacity); }
+    }
+    let particles = Array.from({length: 25}, () => new HeartParticle());
+    function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+    animate();
+
+    function startLove() {
+        const name = document.getElementById('userName').value.trim();
+        if (!name) return alert("Nhập tên đã chứ!");
+        document.getElementById('loveMusic').play().catch(() => {});
+        document.getElementById('inputBox').style.display = 'none';
+        
+        let loveInterval = setInterval(() => {
+            const icons = ["❤️", "🌹", "💖", "🌷", "🌸"];
+            createFloatingText(`Love u ${name} ${icons[Math.floor(Math.random()*icons.length)]}`);
+        }, 200);
+
+        setTimeout(() => {
+            clearInterval(loveInterval);
+            setTimeout(() => {
+                const final = document.getElementById('final-message');
+                final.innerText = `Mãi yêu ${name}!\nHappy Valentine's Day! ❤️`;
+                final.style.transform = 'translate(-50%, -50%) scale(1)';
+                final.classList.add('heart-beat');
+            }, 3000);
+        }, 10000);
+    }
+
+    function createFloatingText(content) {
+        const span = document.createElement('span');
+        span.className = 'floating-text';
+        span.innerText = content;
+        span.style.left = Math.random() * 70 + 15 + '%';
+        const duration = Math.random() * 2 + 5;
+        span.style.animationDuration = duration + 's';
+        span.style.fontSize = Math.random() * 8 + 22 + 'px';
+        document.getElementById('love-rain').appendChild(span);
+        setTimeout(() => span.remove(), duration * 1000);
+    }
+</script>
+</body>
+</html>
