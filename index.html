@@ -3,72 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine Super Fast Challenge ❤️</title>
+    <title>My Sweet Valentine ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --heart-color: #ff4d6d;
             --text-color: #d63384;
-            /* TỐC ĐỘ DI CHUYỂN - Bạn có thể tăng số này nếu muốn nhanh hơn nữa */
-            --speed-multiplier: 20; 
         }
 
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; background-color: #fff5f7;
+            font-family: 'Quicksand', sans-serif;
         }
 
-       body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    /* Thêm hình nền ở đây */
-    background-image: url('background.jpg'); 
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    font-family: 'Segoe UI', cursive, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+        body {
+            background-image: url('background.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-/* Thêm một lớp phủ mờ để các hạt trái tim và chữ nổi bật hơn */
-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 245, 247, 0.3); /* Phủ một lớp hồng cực nhạt, trong suốt 30% */
-    z-index: 0;
-}
+        /* Lớp phủ mờ nền */
+        body::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 245, 247, 0.4);
+            z-index: 0;
+        }
 
+        /* --- PHẦN 1: GIAO DIỆN CHỌN ẢNH ĐỨNG YÊN --- */
         #photo-challenge {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10; pointer-events: none;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            animation: fadeIn 1s ease;
         }
 
         .instruction-text {
-            position: absolute; top: 30px; width: 100%; text-align: center;
-            color: var(--text-color); text-shadow: 0 0 15px white;
-            font-size: 28px; font-weight: bold; z-index: 11;
-            text-transform: uppercase; letter-spacing: 2px;
+            color: var(--text-color);
+            text-shadow: 0 0 15px white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
         }
 
         .photo-item {
-            position: absolute; width: 110px; height: 110px;
-            border-radius: 50%; object-fit: cover;
-            border: 5px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            cursor: pointer; pointer-events: auto;
-            user-select: none;
-            will-change: transform, left, top; /* Tối ưu hiệu năng cho trình duyệt */
+            width: 130px; height: 130px;
+            border-radius: 20px;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s;
         }
 
-        .photo-item:active { transform: scale(0.9); }
+        .photo-item:hover {
+            transform: scale(1.1) rotate(2deg);
+            border-color: var(--heart-color);
+        }
 
-        /* Khung nhập tên */
+        /* --- PHẦN 2: NHẬP TÊN --- */
         .input-container {
             display: none; position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%); z-index: 25;
@@ -78,29 +85,94 @@ body::before {
             border: 3px solid var(--heart-color);
         }
 
-        input { padding: 15px; width: 85%; border: 2px solid #ffccd5; border-radius: 50px; outline: none; font-size: 18px; text-align: center; margin-bottom: 20px; }
-        button { padding: 15px 30px; background: var(--heart-color); color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
-
-        canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0; }
-        #love-rain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
-        
-        .floating-text {
-            position: absolute; white-space: nowrap; color: var(--text-color);
-            font-weight: bold; text-shadow: 2px 2px 10px white;
-            animation: floatUp linear forwards;
+        input { 
+            padding: 15px; width: 85%; border: 2px solid #ffccd5; border-radius: 50px; 
+            outline: none; font-size: 18px; text-align: center; margin-bottom: 20px;
+            font-family: 'Quicksand', sans-serif;
+        }
+        button { 
+            padding: 15px 30px; background: var(--heart-color); color: white; 
+            border: none; border-radius: 50px; cursor: pointer; font-weight: 700; 
+            width: 100%; font-size: 16px; font-family: 'Quicksand', sans-serif;
         }
 
-        @keyframes floatUp { 0% { transform: translateY(110vh); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-15vh); opacity: 0; } }
+        /* --- PHẦN 3: HIỆU ỨNG 3D SAU KHI NHẬP TÊN --- */
+        #love-rain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 5;
+            perspective: 1200px;
+        }
+
+        .floating-3d {
+            position: absolute;
+            will-change: transform, opacity;
+            transform-style: preserve-3d;
+            animation: float3D linear forwards;
+        }
+
+        .floating-text {
+            color: var(--text-color);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            text-shadow: 0 0 10px white;
+            white-space: nowrap;
+        }
+
+        .memory-card {
+            object-fit: cover;
+            border: 8px solid white;
+            padding-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        @keyframes float3D {
+            0% { transform: translateZ(-800px) translateY(100vh) rotateX(45deg); opacity: 0; filter: blur(10px); }
+            20% { opacity: 1; filter: blur(0px); }
+            80% { opacity: 1; filter: blur(0px); }
+            100% { transform: translateZ(600px) translateY(-20vh) rotateX(-20deg); opacity: 0; filter: blur(4px); }
+        }
 
         #final-message {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
-            width: 95%; font-size: 45px; color: var(--text-color); font-weight: bold;
-            text-align: center; z-index: 30; transition: 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 0 0 25px white;
-        }
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 95%;
+    font-size: 45px;
+    color: var(--text-color);
+    font-weight: 800;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    z-index: 30;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 77, 109, 0.5);
+    white-space: pre-line;
+    transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
-        .heart-beat { animation: beat 1.5s infinite; }
-        @keyframes beat { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.05); } }
+/* Animation nhịp đập và đổi màu cho dòng chữ cuối */
+.final-anim {
+    animation: heartBeat 2s infinite, glowText 3s infinite alternate;
+}
+        canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes heartBeat {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    14% { transform: translate(-50%, -50%) scale(1.1); }
+    28% { transform: translate(-50%, -50%) scale(1); }
+    42% { transform: translate(-50%, -50%) scale(1.15); }
+    70% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes glowText {
+    from {
+        text-shadow: 0 0 20px #fff, 0 0 30px var(--heart-color);
+        color: var(--text-color);
+    }
+    to {
+        text-shadow: 0 0 30px #fff, 0 0 50px #ff0040;
+        color: #ff0040;
+    }
+}
     </style>
 <script type="importmap">
 {
@@ -115,120 +187,103 @@ body::before {
 </head>
 <body>
 
-    <div class="bg-overlay"></div>
-    <div class="blur-layer"></div>
     <audio id="loveMusic" loop><source src="nhac.mp3" type="audio/mpeg"></audio>
     <canvas id="canvas"></canvas>
 
     <div id="photo-challenge">
-        <div class="instruction-text">Chọn ảnh cho đúng! 💨</div>
-        <img src="nguoi-la-1.jpg" class="photo-item" onclick="wrongAnswer()">
-        <img src="nguoi-yeu.jpg" class="photo-item" onclick="rightAnswer()">
-        <img src="nguoi-la-2.jpg" class="photo-item" onclick="wrongAnswer()">
-        <img src="nguoi-la-3.jpg" class="photo-item" onclick="wrongAnswer()">
+        <div class="instruction-text">Chọn đúng người ấy ❤️</div>
+        <div class="photo-grid">
+            <img src="nguoi-la-1.jpg" class="photo-item" onclick="wrongAnswer()">
+            <img src="nguoi-yeu.jpg" class="photo-item" onclick="rightAnswer()">
+            <img src="nguoi-la-2.jpg" class="photo-item" onclick="wrongAnswer()">
+            <img src="nguoi-la-3.jpg" class="photo-item" onclick="wrongAnswer()">
+        </div>
     </div>
 
     <div class="input-container" id="inputBox">
-        <h2 style="color: var(--text-color); margin-top:0;">Đỉnh quá! Bắt được anh rồi! ✨</h2>
-        <input type="text" id="userName" placeholder="Nhập tên em vào đây..." autocomplete="off">
-        <button onclick="startLove()">Xác nhận yêu thương 🌹</button>
+        <h2 style="color: var(--text-color); margin-top:0; font-family: 'Montserrat';">CHÍNH XÁC! ❤️</h2>
+        <input type="text" id="userName" placeholder="Nhập tên người ấy..." autocomplete="off">
+        <button onclick="startLove()">NHẬN QUÀ VALENTINE 🌹</button>
     </div>
 
     <div id="love-rain"></div>
     <div id="final-message"></div>
 
 <script>
-    // --- KHỞI TẠO VẬT LÝ CHO ẢNH ---
-    const photos = document.querySelectorAll('.photo-item');
-const photoData = [];
-const BASE_SPEED = 5; // Tốc độ cơ bản (rất nhanh)
+    // 1. DỮ LIỆU ẢNH KỶ NIỆM
+    const memoryImages = ['memory1.jpg', 'memory4.jpg', 'memory3.jpg', 'memory5.jpg'];
 
-photos.forEach(photo => {
-    // Đảm bảo dx và dy không bao giờ quá nhỏ (không bao giờ dưới 15)
-    let dx = (Math.random() - 0.5) * BASE_SPEED;
-    let dy = (Math.random() - 0.5) * BASE_SPEED;
-
-    // Fix lỗi "chạy chậm": Nếu vận tốc quá nhỏ, đẩy nó lên mức tối thiểu
-    if (Math.abs(dx) < 5) dx = dx < 0 ? -5 : 5;
-    if (Math.abs(dy) < 5) dy = dy < 0 ? -5 : 5;
-
-    photoData.push({
-        el: photo,
-        x: Math.random() * (window.innerWidth - 110),
-        y: Math.random() * (window.innerHeight - 110),
-        dx: dx,
-        dy: dy,
-        rotation: 0,
-        rotSpeed: (Math.random() - 0.5) * 10
-    });
-});
-const memoryImages = [
-    'memory1.jpg', 
-    'memory4.jpg', 
-    'memory3.jpg', 
-	'memory5.jpg'
-	// Có thể dùng lại ảnh cũ
-];
-
-// 2. HÀM TẠO ẢNH BAY 3D
-function createFloatingImage() {
-    const container = document.getElementById('love-rain');
-    const img = document.createElement('img');
-    
-    // Chọn ngẫu nhiên 1 tấm ảnh từ mảng
-    img.src = memoryImages[Math.floor(Math.random() * memoryImages.length)];
-    img.className = 'floating-text'; // Dùng chung class để lấy hiệu ứng 3D
-    
-    // Tùy chỉnh riêng cho ảnh để trông như ảnh chụp lấy liền (Polaroid)
-    img.style.width = '120px';
-    img.style.height = '150px';
-    img.style.objectFit = 'cover';
-    img.style.border = '6px solid white';
-    img.style.paddingBottom = '20px'; // Tạo khoảng trắng phía dưới như ảnh Polaroid
-    img.style.boxShadow = '0 10px 20px rgba(0,0,0,0.3)';
-    
-    img.style.left = Math.random() * 80 + 10 + '%';
-    const duration = Math.random() * 4 + 6; // Ảnh bay chậm hơn chữ một chút để nhìn rõ
-    img.style.animationDuration = duration + 's';
-
-    container.appendChild(img);
-    setTimeout(() => img.remove(), duration * 1000);
-}
-    function updatePhysics() {
-    photoData.forEach(p => {
-        p.x += p.dx;
-        p.y += p.dy;
-        p.rotation += p.rotSpeed;
-
-        // Va chạm biên - Nảy lại cực căng
-        if (p.x + 110 > window.innerWidth || p.x < 0) {
-            p.dx *= -1;
-            // Giữ cho vị trí không bị kẹt ngoài màn hình
-            p.x = p.x < 0 ? 0 : window.innerWidth - 110;
-        }
-        if (p.y + 110 > window.innerHeight || p.y < 0) {
-            p.dy *= -1;
-            p.y = p.y < 0 ? 0 : window.innerHeight - 110;
-        }
-
-        p.el.style.left = p.x + 'px';
-        p.el.style.top = p.y + 'px';
-        p.el.style.transform = `rotate(${p.rotation}deg)`;
-    });
-    requestAnimationFrame(updatePhysics);
-}
-updatePhysics();
-
-    function wrongAnswer() {
-        alert("Hụt rồi! 😠 Chọn lại coi!");
-    }
-
+    // 2. XỬ LÝ CHỌN ẢNH
+    function wrongAnswer() { alert("Sai rồi! Chọn lại coi! 😠"); }
     function rightAnswer() {
         document.getElementById('photo-challenge').style.display = 'none';
         document.getElementById('inputBox').style.display = 'block';
     }
 
-    // --- HIỆU ỨNG NỀN VÀ CHỮ (Giữ nguyên) ---
+    // 3. TẠO CHỮ 3D BAY
+    function createFloatingText(content) {
+        const container = document.getElementById('love-rain');
+        const span = document.createElement('span');
+        span.className = 'floating-3d floating-text';
+        span.innerText = content;
+        span.style.left = Math.random() * 70 + 15 + '%';
+        const duration = Math.random() * 3 + 5;
+        span.style.animationDuration = duration + 's';
+        span.style.fontSize = Math.random() * 10 + 25 + 'px';
+        container.appendChild(span);
+        setTimeout(() => span.remove(), duration * 1000);
+    }
+
+    // 4. TẠO ẢNH KỶ NIỆM 3D (POLAROID)
+    function createFloatingImage() {
+        const container = document.getElementById('love-rain');
+        const img = document.createElement('img');
+        img.src = memoryImages[Math.floor(Math.random() * memoryImages.length)];
+        img.className = 'floating-3d memory-card';
+        img.style.width = '120px';
+        img.style.height = '150px';
+        img.style.left = Math.random() * 70 + 15 + '%';
+        const duration = Math.random() * 4 + 7;
+        img.style.animationDuration = duration + 's';
+        
+        container.appendChild(img);
+        img.onerror = () => img.remove();
+        setTimeout(() => img.remove(), duration * 1000);
+    }
+
+    // 5. BẮT ĐẦU HIỆU ỨNG
+    function startLove() {
+        const name = document.getElementById('userName').value.trim();
+        if (!name) return alert("Nhập tên đã nhé!");
+        
+        document.getElementById('loveMusic').play().catch(() => {});
+        document.getElementById('inputBox').style.display = 'none';
+        
+        // Hiện chữ (Mỗi 0.4s)
+        let loveInterval = setInterval(() => {
+            const icons = ["❤️", "🌹", "💖", "✨"];
+            createFloatingText(`LOVE U ${name.toUpperCase()} ${icons[Math.floor(Math.random()*icons.length)]}`);
+        }, 400);
+
+        // Hiện ảnh (Mỗi 2.5s)
+        let imageInterval = setInterval(() => {
+            createFloatingImage();
+        }, 2500);
+
+        // Kết thúc sau 30 giây
+        setTimeout(() => {
+            clearInterval(loveInterval);
+            clearInterval(imageInterval);
+            setTimeout(() => {
+                const final = document.getElementById('final-message');
+                final.innerText = ` YÊU ${name.toUpperCase()}!\nHAPPY VALENTINE'S DAY! ❤️\n YÊU EM NHIỀUUUUUUUUUUUUUUUUU`;
+                final.style.transform = 'translate(-50%, -50%) scale(1)';
+                final.classList.add('final-anim');
+            }, 3000);
+        }, 30000);
+    }
+
+    // 6. CANVAS TRÁI TIM BAY (Nền)
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -250,48 +305,6 @@ updatePhysics();
     let particles = Array.from({length: 25}, () => new HeartParticle());
     function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
     animate();
-
-    function startLove() {
-    const name = document.getElementById('userName').value.trim();
-    if (!name) return alert("Phải nhập tên mới gửi được tình yêu chứ!");
-    
-    document.getElementById('loveMusic').play().catch(() => {});
-    document.getElementById('inputBox').style.display = 'none';
-    
-    // Chạy chữ 3D
-    let loveInterval = setInterval(() => {
-        const icons = ["❤️", "🌹", "💖", "🌷", "🌸", "✨"];
-        createFloatingText(`LOVE U ${name.toUpperCase()} ${icons[Math.floor(Math.random()*icons.length)]}`);
-    }, 250);
-
-    // CHẠY ẢNH KỶ NIỆM (Cứ mỗi 1.5 giây hiện 1 tấm)
-    let imageInterval = setInterval(() => {
-        createFloatingImage();
-    }, 1500);
-
-    setTimeout(() => {
-        clearInterval(loveInterval);
-        clearInterval(imageInterval); // Dừng hiện ảnh
-        setTimeout(() => {
-            const final = document.getElementById('final-message');
-            final.innerText = `MÃI YÊU ${name.toUpperCase()}!\nHAPPY VALENTINE'S DAY! ❤️\n YÊU EM NHIỀUUUUUUUUUUUUUUUUUU`;
-            final.style.transform = 'translate(-50%, -50%) scale(1)';
-        }, 3000);
-    }, 30000); // Tăng thời gian lên 12 giây để xem ảnh cho đã
-}
-
-    function createFloatingText(content) {
-        const span = document.createElement('span');
-        span.className = 'floating-text';
-        span.innerText = content;
-        span.style.left = Math.random() * 70 + 15 + '%';
-        const duration = Math.random() * 2 + 5;
-        span.style.animationDuration = duration + 's';
-        span.style.fontSize = Math.random() * 8 + 22 + 'px';
-        document.getElementById('love-rain').appendChild(span);
-        setTimeout(() => span.remove(), duration * 1000);
-    }
 </script>
 </body>
 </html>
-
