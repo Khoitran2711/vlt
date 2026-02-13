@@ -124,7 +124,49 @@
             padding-bottom: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
+@media (max-width: 600px) {
+    /* 1. Giảm kích thước ảnh trong lưới chọn */
+    .photo-item {
+        width: 110px;
+        height: 110px;
+        border-radius: 15px;
+    }
+    
+    .photo-grid {
+        gap: 15px;
+    }
 
+    /* 2. Chỉnh font chữ thông điệp cuối nhỏ lại để không bị tràn */
+    #final-message {
+        font-size: 28px; /* Giảm từ 45px xuống */
+        width: 90%;
+        line-height: 1.4;
+        word-wrap: break-word; /* Đảm bảo chữ NHIỀUUUU không bị tràn ngang */
+    }
+
+    /* 3. Giảm kích thước ảnh kỷ niệm bay 3D */
+    .memory-card {
+        width: 90px !important; /* Nhỏ lại để cân đối màn hình dọc */
+        height: 120px !important;
+        border: 5px solid white !important;
+    }
+
+    /* 4. Chỉnh chữ bay nhỏ lại một chút */
+    .floating-text {
+        font-size: 18px !important;
+    }
+
+    /* 5. Khung nhập tên thu nhỏ lại cho vừa tay */
+    .input-container {
+        width: 280px;
+        padding: 30px 20px;
+    }
+
+    .instruction-text {
+        font-size: 22px;
+        padding: 0 10px;
+    }
+}
         @keyframes float3D {
             0% { transform: translateZ(-800px) translateY(100vh) rotateX(45deg); opacity: 0; filter: blur(10px); }
             20% { opacity: 1; filter: blur(0px); }
@@ -308,4 +350,5 @@
 </script>
 </body>
 </html>
+
 
